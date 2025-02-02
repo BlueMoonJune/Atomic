@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "atomic",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This mod aims to help new BTA modders.",
+  "name": "Atomic",
+  "description": "A collection of tweaks for BTA you can pick-and-choose",
   "authors": [
-    "Turnip Labs"
+    "BlueMoonJune - Lead Developer"
   ],
   "contact": {
     "homepage": "",
@@ -19,21 +19,23 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-			"turniplabs.examplemod.ExampleMod"
+			"bluemoonjune.atomic.Atomic"
     ],
 		"beforeGameStart": [
-			"turniplabs.examplemod.ExampleMod"
+			"bluemoonjune.atomic.Atomic"
 		],
 		"afterGameStart": [
-			"turniplabs.examplemod.ExampleMod"
+			"bluemoonjune.atomic.Atomic"
 		],
 		"recipesReady": [
-			"turniplabs.examplemod.ExampleMod"
+			"bluemoonjune.atomic.Atomic"
 		]
 	},
   "mixins": [
-      "examplemod.mixins.json"
+		"atomic.mixins.json"
   ],
+
+	"accessWidener": "atomic.accesswidener",
 
   "depends": {
 		"minecraft": "*",

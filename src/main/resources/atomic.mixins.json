@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "bluemoonjune.atomic.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "CommandManagerMixin",
+    "WorldMixin",
+    "baskettipping.BlockLogicBasketMixin",
+    "baskettipping.TileEntityBasketMixin",
+    "craftivators.BlockLogicActivatorMixin",
+    "craftivators.BlockLogicWorkbenchMixin",
+    "oreredirect.OreRedstoneMixin",
+    "oreredirect.WorldMixin",
+    "reinforced.BlockLogicMixin",
+    "reinforced.BlockLogicPistonBaseSteelMixin",
+    "reinforced.BlockLogicSugarcaneMixin"
+  ],
+  "client": [
+    "baskettipping.BlockModelBasketMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
