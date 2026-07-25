@@ -17,9 +17,6 @@ import java.util.Random;
 @Mixin(value = BlockLogicActivator.class)
 public abstract class BlockLogicActivatorMixin extends BlockLogic {
 
-	@Shadow
-	protected abstract void useItem(World world, int x, int y, int z, Random random);
-
 	public BlockLogicActivatorMixin(Block<?> block, Material material) {
 		super(block, material);
 	}
@@ -32,15 +29,15 @@ public abstract class BlockLogicActivatorMixin extends BlockLogic {
 	public ItemStack useWorkbenchRegardless(TileEntityActivator instance) {
 
 		if (!Atomic.FEATURES.get("Craftivators")) return instance.getNextStack();
-		int x = instance.x;
-		int y = instance.y;
-		int z = instance.z;
+		int x = instance.tilePos.x;
+		int y = instance.tilePos.y;
+		int z = instance.tilePos.z;
 		World world = instance.worldObj;
 
 		Direction direction = BlockLogicRotatable.getDirectionFromMeta(world.getBlockMetadata(x, y, z));
-		int xOffset = direction.getOffsetX();
-		int yOffset = direction.getOffsetY();
-		int zOffset = direction.getOffsetZ();
+		int xOffset = direction.offsetX();
+		int yOffset = direction.offsetY();
+		int zOffset = direction.offsetZ();
 		double px = (double)xOffset * 0.6 + (double)0.5F;
 		double py = (double)yOffset * 0.6 + (double)0.5F;
 		double pz = (double)zOffset * 0.6 + (double)0.5F;

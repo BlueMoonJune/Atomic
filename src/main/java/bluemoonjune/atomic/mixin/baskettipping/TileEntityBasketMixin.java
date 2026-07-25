@@ -2,6 +2,8 @@ package bluemoonjune.atomic.mixin.baskettipping;
 
 import bluemoonjune.atomic.Atomic;
 import bluemoonjune.atomic.baskettipping.IFlip;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.entity.TileEntityActivator;
@@ -31,7 +33,8 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 
 	@Shadow(remap = false)
 	@Final
-	private Map<TileEntityBasket.BasketEntry, Integer> contents;
+	private Object2IntMap<TileEntityBasket.BasketEntry> contents;
+
 
 	@Inject(
 		method = "tick",
@@ -43,8 +46,9 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 		if (flipTime > 0) {
 			flipTime--;
 			if (flipTime == 0) {
-				worldObj.setBlockMetadata(x, y, z, worldObj.getBlockMetadata(x, y, z) & ~1);
-				worldObj.notifyBlockChange(this.x, this.y, this.z, Blocks.BASKET.id());
+
+				worldObj.setBlockMetadata(tilePos.x, tilePos.y, tilePos.z, worldObj.getBlockMetadata(tilePos.x, tilePos.y, tilePos.z) & ~1);
+				worldObj.notifyBlockChange(tilePos.x, tilePos.y, tilePos.z, Blocks.BASKET.id());
 			}
 		}
 	}
@@ -56,17 +60,17 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 	public void flip(int flipTime) {
 		this.flipTime = flipTime;
 		if (worldObj == null) return;
-		TileEntity below = worldObj.getTileEntity(x, y-1, z);
+		TileEntity below = worldObj.getTileEntity(tilePos.x, tilePos.y - 1, tilePos.z);
 
-		int offset = below instanceof TileEntityActivator ? ((TileEntityActivator)below).stackSelector : 0;
+		int offset = below instanceof TileEntityActivator ? ((TileEntityActivator) below).stackSelector : 0;
 
 		if (below instanceof Container) {
-			Container container = (Container)below;
+			Container container = (Container) below;
 			List<TileEntityBasket.BasketEntry> toRemove = new ArrayList<>();
 
-			for(Map.Entry<TileEntityBasket.BasketEntry, Integer> entry : this.contents.entrySet()) {
-				TileEntityBasket.BasketEntry basketEntry = (TileEntityBasket.BasketEntry)entry.getKey();
-				ItemStack basketEntryStack = new ItemStack(basketEntry.id, (Integer)entry.getValue(), basketEntry.metadata, basketEntry.tag);
+			for (Map.Entry<TileEntityBasket.BasketEntry, Integer> entry : this.contents.entrySet()) {
+				TileEntityBasket.BasketEntry basketEntry = (TileEntityBasket.BasketEntry) entry.getKey();
+				ItemStack basketEntryStack = new ItemStack(basketEntry.id(), (Integer) entry.getValue(), basketEntry.metadata(), basketEntry.tag());
 
 				int size = container.getContainerSize();
 
@@ -75,8 +79,7 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 					ItemStack slot = container.getItem(i);
 					if (slot == null) {
 						container.setItem(i, basketEntryStack.splitStack(Math.min(basketEntryStack.getMaxStackSize(), basketEntryStack.stackSize)));
-					}
-					else if (slot.canStackWith(basketEntryStack)) {
+					} else if (slot.canStackWith(basketEntryStack)) {
 						int amt = Math.min(basketEntryStack.stackSize, slot.getMaxStackSize() - slot.stackSize);
 						basketEntryStack.stackSize -= amt;
 						slot.stackSize += amt;
@@ -90,15 +93,15 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 
 			}
 
-			for(TileEntityBasket.BasketEntry entry : toRemove) {
+			for (TileEntityBasket.BasketEntry entry : toRemove) {
 				this.contents.remove(entry);
 			}
 
 			updateNumUnits();
-			worldObj.notifyBlockChange(this.x, this.y, this.z, Blocks.BASKET.id());
+			worldObj.notifyBlockChange(this.tilePos.x, this.tilePos.y, this.tilePos.z, Blocks.BASKET.id());
 			return;
 		}
-		dropContents(worldObj, x, y, z);
+		dropContents(worldObj, tilePos.x, tilePos.y, tilePos.z);
 	}
 
 	@Inject(
@@ -124,7 +127,7 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 			workingWorld = this.carriedBlock.world;
 		}
 
-		EntityItem item = new EntityItem(workingWorld, (double)((float)this.x + f), (double)((float)this.y + f1), (double)((float)this.z + f2), itemstack);
+		EntityItem item = new EntityItem(workingWorld, (double)((float)this.tilePos.x + f), (double)((float)this.tilePos.y + f1), (double)((float)this.tilePos.z + f2), itemstack);
 		item.xd = 0;
 		item.yd = 0;
 		item.zd = 0;

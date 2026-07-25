@@ -5,12 +5,8 @@ import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 import net.minecraft.core.world.save.LevelStorage;
-import net.minecraft.server.MinecraftServer;
-import org.checkerframework.checker.units.qual.A;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,7 +18,7 @@ import java.nio.file.Files;
 public abstract class WorldMixin implements WorldSource {
 
 	@Shadow
-	public LevelStorage saveHandler;
+	public LevelStorage levelStorage;
 
 	@Inject(
 		method = "saveWorldData",
@@ -30,8 +26,8 @@ public abstract class WorldMixin implements WorldSource {
 		remap = false
 	)
 	public void saveFeatures(CallbackInfo ci) throws IOException {
-		File file = saveHandler.getDataFile("atomic");
-		if (file.exists() || file.createNewFile()) {
+		File file = levelStorage.getDataFile("atomic");
+		if (file != null && (file.exists() || file.createNewFile())) {
 			CompoundTag tag = new CompoundTag();
 			for (String feature : Atomic.FEATURES.keySet()) {
 				tag.putBoolean(feature, Atomic.FEATURES.get(feature));
@@ -41,13 +37,13 @@ public abstract class WorldMixin implements WorldSource {
 	}
 
 	@Inject(
-		method = "<init>(Lnet/minecraft/core/world/save/LevelStorage;Ljava/lang/String;JLnet/minecraft/core/world/Dimension;Lnet/minecraft/core/world/type/WorldType;)V",
+		method = "<init>(Lnet/minecraft/core/world/save/LevelStorage;Lnet/minecraft/core/world/settings/WorldConfiguration;Lnet/minecraft/core/world/Dimension;)V",
 		at = @At("TAIL"),
 		remap = false
 	)
 	public void loadFeatures(CallbackInfo ci) throws IOException {
-		File file = saveHandler.getDataFile("atomic");
-		if (file.exists()) {
+		File file = levelStorage.getDataFile("atomic");
+		if (file != null && file.exists()) {
 			CompoundTag tag = new CompoundTag();
 			tag.read(new DataInputStream(Files.newInputStream(file.toPath())));
 			for (String feature : tag.getValue().keySet()) {

@@ -14,6 +14,9 @@ import net.minecraft.core.player.inventory.container.ContainerCrafting;
 import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePos;
+import net.minecraft.core.world.pos.TilePosc;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(value = BlockLogicWorkbench.class)
@@ -24,7 +27,7 @@ public abstract class BlockLogicWorkbenchMixin extends BlockLogic {
 	}
 
 	@Override
-	public void onActivatorInteract(World world, int x, int y, int z, TileEntityActivator activator, Direction direction) {
+	public void onActivatorInteracted(@NotNull World world, @NotNull TilePosc pos, @NotNull TileEntityActivator activator, @NotNull Direction direction) {
 		if (!Atomic.FEATURES.get("Craftivators")) return;
 		ContainerCrafting crafting = new ContainerCrafting(new MenuNull(), 3, 3);
 		for (int i = 0; i < 9; i++) {
@@ -36,10 +39,9 @@ public abstract class BlockLogicWorkbenchMixin extends BlockLogic {
 		for (int i = 0; i < 9; i++) {
 			activator.setItem(i, crafting.getItem(i));
 		}
-		world.dropItem(x, y+1, z, result);
+		world.dropItem(pos.x(), pos.y()+1, pos.z(), result);
 		for (Player player : world.players) {
-			world.playSoundEffect(player, SoundCategory.WORLD_SOUNDS, x, y, z, "step.wood", 1, 1);
+			world.playSoundEffect(player, SoundCategory.WORLD_SOUNDS, pos.x(), pos.y(), pos.z(), "step.wood", 1, 1);
 		}
 	}
-
 }

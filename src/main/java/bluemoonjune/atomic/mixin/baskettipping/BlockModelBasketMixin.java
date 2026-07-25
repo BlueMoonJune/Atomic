@@ -1,68 +1,51 @@
 package bluemoonjune.atomic.mixin.baskettipping;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import net.minecraft.client.render.block.model.BlockModel;
-import net.minecraft.client.render.block.model.BlockModelBasket;
+import net.minecraft.client.render.block.model.BlockModelDispatcher;
+import net.minecraft.client.render.block.model.generic.BlockModelGeneric;
+import net.minecraft.client.render.block.model.generic.BlockModelGenericBasket;
+import net.minecraft.client.render.block.model.generic.BlockModelGenericSlab;
 import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogicBasket;
+import net.minecraft.core.block.Blocks;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.util.phys.AABB;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.useless.dragonfly.models.block.StaticBlockModel;
 
-@Mixin(value = BlockModelBasket.class)
-public abstract class BlockModelBasketMixin<T extends BlockLogicBasket> extends BlockModel<T> {
+@Mixin(value = BlockModelGenericBasket.class)
+public abstract class BlockModelBasketMixin<T extends BlockLogicBasket> extends BlockModelGeneric<T> {
 
+	@Unique
+	private StaticBlockModel tipped;
 
-	public BlockModelBasketMixin(Block block) {
-		super(block);
-	}
-
-	@Redirect(
-		method = "render",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/model/BlockModelBasket;renderStandardBlock(Lnet/minecraft/client/render/tessellator/Tessellator;Lnet/minecraft/core/util/phys/AABB;III)Z", ordinal = 0),
-		remap = false
-	)
-	public boolean flipBottom(BlockModelBasket<T> instance, Tessellator tessellator, AABB aabb, int x, int y, int z) {
-		if ((renderBlocks.blockAccess.getBlockMetadata(x, y, z) & 1) == 1) {
-			aabb.set(0, 15/16.0, 0, 1, 1, 1);
-		}
-		instance.renderStandardBlock(tessellator, aabb, x, y, z);
-		return true;
+	public BlockModelBasketMixin(@NotNull Block<T> block, @NotNull StaticBlockModel staticModel) {
+		super(block, staticModel);
 	}
 
 	@Inject(
-		method = "render",
-		at = @At("RETURN"),
-		remap = false
+		method = "<init>",
+		at = @At("TAIL")
 	)
-	public void resetAfterRender(CallbackInfoReturnable<Boolean> cir) {
-		resetRenderBlocks();
+	public void loadModel(Block<?> block, CallbackInfo ci) {
+		tipped = BlockModelDispatcher.loadDataModel("atomic:block/basket_tipped").asModel();
 	}
 
-	@Inject(
-		method = "render",
-		at = @At("HEAD"),
-		remap = false
-	)
-	public void renderFlipped(Tessellator tessellator, int x, int y, int z, CallbackInfoReturnable<Boolean> cir) {
-		if ((renderBlocks.blockAccess.getBlockMetadata(x, y, z) & 1) == 1) {
-			renderBlocks.uvRotateNorth = 3;
-			renderBlocks.uvRotateEast = 3;
-			renderBlocks.uvRotateSouth = 3;
-			renderBlocks.uvRotateWest = 3;
+	@Override
+	public @NotNull StaticBlockModel getModelFromData(int data) {
+		if ((data & 1) == 1) {
+			return tipped;
 		}
-	}
-
-	@Redirect(
-		method = "render",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/block/model/BlockModelBasket;setRenderSide(Lnet/minecraft/core/util/helper/Side;Z)V"),
-		remap = false
-	)
-	public void fixEdges(BlockModelBasket instance, Side side, boolean b) {
-		instance.setRenderSide(side,side == Side.BOTTOM || b);
+		return super.getModelFromData(data);
 	}
 }
+

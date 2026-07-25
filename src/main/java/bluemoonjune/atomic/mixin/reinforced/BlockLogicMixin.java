@@ -2,6 +2,8 @@ package bluemoonjune.atomic.mixin.reinforced;
 
 import bluemoonjune.atomic.Atomic;
 import bluemoonjune.atomic.MenuNull;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.entity.TileEntity;
@@ -25,18 +27,17 @@ public abstract class BlockLogicMixin implements IItemConvertible {
 	@NotNull
 	public Block<?> block;
 
-	@Redirect(
-		method = "dropBlockWithCause",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/core/block/BlockLogic;getBreakResult(Lnet/minecraft/core/world/World;Lnet/minecraft/core/enums/EnumDropCause;IIIILnet/minecraft/core/block/entity/TileEntity;)[Lnet/minecraft/core/item/ItemStack;"),
+	@WrapMethod(
+		method = "getBreakResult(Lnet/minecraft/core/world/World;Lnet/minecraft/core/enums/EnumDropCause;ILnet/minecraft/core/block/entity/TileEntity;)[Lnet/minecraft/core/item/ItemStack;",
 		remap = false
 	)
-	public ItemStack[] crushResourceBlock(BlockLogic instance, World world, EnumDropCause dropCause, int x, int y, int z, int meta, TileEntity tileEntity) {
+	public ItemStack[] crushResourceBlock(World world, EnumDropCause dropCause, int data, TileEntity tileEntity, Operation<ItemStack[]> original) {
 		if (Atomic.FEATURES.get("ReinforcedCrushing") && dropCause == EnumDropCause.PISTON_CRUSH) {
 			ItemStack item = new ItemStack(this.block);
 			if (Atomic.CRUSHING.containsKey(this.block)) {
 				return (new ItemStack[]{Atomic.CRUSHING.get(this.block)});
 			}
-			if (!item.getItem().namespaceID.value.contains("block")) return null;
+			if (!item.getItem().namespaceID.value().contains("block")) return null;
 			ContainerCrafting crafting = new ContainerCrafting(new MenuNull(), 3, 3);
 			crafting.setItem(0, item);
 			ItemStack result = Registries.RECIPES.findMatchingRecipe(crafting);
@@ -44,6 +45,6 @@ public abstract class BlockLogicMixin implements IItemConvertible {
 				return (new ItemStack[]{result});
 			}
 		}
-		return instance.getBreakResult(world, dropCause, x, y, z, meta, tileEntity);
+		return original.call(world, dropCause, data, tileEntity);
 	}
 }

@@ -5,6 +5,7 @@ import bluemoonjune.atomic.baskettipping.IFlip;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicBasket;
+import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.entity.TileEntityActivator;
 import net.minecraft.core.block.entity.TileEntityBasket;
 import net.minecraft.core.block.material.Material;
@@ -13,6 +14,8 @@ import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.pos.TilePos;
+import net.minecraft.core.world.pos.TilePosc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,14 +33,14 @@ public abstract class BlockLogicBasketMixin extends BlockLogic {
 	}
 
 	@Inject(
-		method = "onBlockRightClicked",
+		method = "onInteracted",
 		at = @At("HEAD"),
 		cancellable = true,
 		remap = false
 	)
-	public void onBlockRightClicked(World world, int x, int y, int z, Player entityplayer, Side side, double xPlaced, double yPlaced, CallbackInfoReturnable<Boolean> cir) {
+	public void onBlockRightClicked(World world, TilePosc tilePos, Player player, Side side, double xHit, double yHit, CallbackInfoReturnable<Boolean> cir) {
 		if (Atomic.FEATURES.get("BasketTipping")) {
-			flip(world, x, y, z);
+			flip(world, tilePos);
 			cir.setReturnValue(true);
 			cir.cancel();
 		}
@@ -45,27 +48,29 @@ public abstract class BlockLogicBasketMixin extends BlockLogic {
 	}
 
 	@Inject(
-		method = "onActivatorInteract",
+		method = "onActivatorInteracted",
 		at = @At("HEAD"),
 		cancellable = true,
 		remap = false
 	)
-	public void onActivatorInteract(World world, int x, int y, int z, TileEntityActivator activator, Direction direction, CallbackInfo ci) {
+	public void onActivatorInteract(World world, TilePosc tilePos, TileEntityActivator activator, Direction direction, CallbackInfo ci) {
 		if (Atomic.FEATURES.get("BasketTipping")) {
-			flip(world, x, y, z);
+			flip(world, tilePos);
 			ci.cancel();
 		}
 
 	}
 
 	@Unique
-	public void flip(World world, int x, int y, int z) {
+	public void flip(World world, TilePosc pos) {
 		for (Player player : world.players) {
-			world.playSoundEffect(player, SoundCategory.WORLD_SOUNDS, x, y, z, "step.cloth", 1, 1);
+			world.playSoundEffect(player, SoundCategory.WORLD_SOUNDS, pos.x(), pos.y(), pos.z(), "step.cloth", 1, 1);
 		}
-		world.setBlockMetadata(x, y, z, world.getBlockMetadata(x, y, z) | 1);
+		world.setBlockData(pos, world.getBlockData(pos) | 1);
 		if (world.isClientSide) return;
-		TileEntityBasket te = (TileEntityBasket) world.getTileEntity(x, y, z);
-		((IFlip)te).flip(20);
+		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof IFlip) {
+			((IFlip)te).flip(20);
+		}
 	}
 }

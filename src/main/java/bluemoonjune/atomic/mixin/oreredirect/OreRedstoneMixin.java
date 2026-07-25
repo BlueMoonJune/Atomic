@@ -40,10 +40,11 @@ public abstract class OreRedstoneMixin extends BlockLogic {
 			!isActiveRedstone(worldSource, x, y, z - 1)) {
 			return false;
 		}
-		int dx = x - side.getOffsetX();
-		int dy = y - side.getOffsetY();
-		int dz = z - side.getOffsetZ();
+		int dx = x - side.offsetX();
+		int dy = y - side.offsetY();
+		int dz = z - side.offsetZ();
 		Block<?> block = worldSource.getBlock(dx, dy, dz);
 		return block == null || !(block.getLogic() instanceof BlockLogicWireRedstone);
 	}
+
 }

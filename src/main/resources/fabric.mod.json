@@ -20,16 +20,7 @@
   "entrypoints": {
     "main": [
 			"bluemoonjune.atomic.Atomic"
-    ],
-		"beforeGameStart": [
-			"bluemoonjune.atomic.Atomic"
-		],
-		"afterGameStart": [
-			"bluemoonjune.atomic.Atomic"
-		],
-		"recipesReady": [
-			"bluemoonjune.atomic.Atomic"
-		]
+    ]
 	},
   "mixins": [
 		"atomic.mixins.json"
