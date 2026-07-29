@@ -4,10 +4,9 @@ import bluemoonjune.atomic.Atomic;
 import bluemoonjune.atomic.baskettipping.IFlip;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.core.block.BlockLogicFurnace;
 import net.minecraft.core.block.Blocks;
-import net.minecraft.core.block.entity.TileEntity;
-import net.minecraft.core.block.entity.TileEntityActivator;
-import net.minecraft.core.block.entity.TileEntityBasket;
+import net.minecraft.core.block.entity.*;
 import net.minecraft.core.entity.EntityItem;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
@@ -62,22 +61,43 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 		if (worldObj == null) return;
 		TileEntity below = worldObj.getTileEntity(tilePos.x, tilePos.y - 1, tilePos.z);
 
-		int offset = below instanceof TileEntityActivator ? ((TileEntityActivator) below).stackSelector : 0;
+		int globalOffset = below instanceof TileEntityActivator ? ((TileEntityActivator) below).stackSelector : 0;
 
 		if (below instanceof Container) {
 			Container container = (Container) below;
 			List<TileEntityBasket.BasketEntry> toRemove = new ArrayList<>();
 
-			for (Map.Entry<TileEntityBasket.BasketEntry, Integer> entry : this.contents.entrySet()) {
+			for (Map.Entry<TileEntityBasket.BasketEntry, Integer> entry : this.contents.object2IntEntrySet()) {
 				TileEntityBasket.BasketEntry basketEntry = (TileEntityBasket.BasketEntry) entry.getKey();
 				ItemStack basketEntryStack = new ItemStack(basketEntry.id(), (Integer) entry.getValue(), basketEntry.metadata(), basketEntry.tag());
 
 				int size = container.getContainerSize();
 
+				int offset = globalOffset;
+				int skipslot = -1;
+				if (below instanceof TileEntityFurnace furnace) {
+					if (furnace.getBurnTimeFromItem(basketEntryStack) > 0) {
+						offset = TileEntityFurnace.SLOT_FUEL;
+					}
+					skipslot = TileEntityFurnace.SLOT_RESULT;
+				} else if (below instanceof TileEntityTrommel trommel) {
+					if (trommel.getItemBurnTime(basketEntryStack) > 0) {
+						offset = TileEntityTrommel.SLOT_FUEL;
+					}
+				} else if (below instanceof TileEntityFurnaceBlast blast) {
+					if (blast.getBurnTimeFromItem(basketEntryStack) > 0) {
+						offset = TileEntityFurnaceBlast.SLOT_FUEL;
+					}
+					skipslot = TileEntityFurnaceBlast.SLOT_RESULT;
+				}
+
 				for (int j = 0; j < size; j++) {
 					int i = (j + offset) % size;
+					if (i == skipslot) continue;
 					ItemStack slot = container.getItem(i);
-					if (slot == null) {
+					if (below instanceof TileEntityActivator act && act.locked(i)) {
+						continue;
+					} else if (slot == null) {
 						container.setItem(i, basketEntryStack.splitStack(Math.min(basketEntryStack.getMaxStackSize(), basketEntryStack.stackSize)));
 					} else if (slot.canStackWith(basketEntryStack)) {
 						int amt = Math.min(basketEntryStack.stackSize, slot.getMaxStackSize() - slot.stackSize);

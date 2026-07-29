@@ -43,6 +43,7 @@ public abstract class BlockLogicActivatorMixin extends BlockLogic {
 		double pz = (double)zOffset * 0.6 + (double)0.5F;
 		Block<?> block = world.getBlock(x + xOffset, y + yOffset, z + zOffset);
 		if (block != null && block.getLogic() instanceof BlockLogicWorkbench) {
+			instance.shiftSelector();
 			return null;
 		}
 		return instance.getNextStack();

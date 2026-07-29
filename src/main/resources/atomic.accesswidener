@@ -1,2 +1,5 @@
 accessWidener v2 official
-accessible  class net/minecraft/core/block/entity/TileEntityBasket$BasketEntry
+accessible class net/minecraft/core/block/entity/TileEntityBasket$BasketEntry
+accessible method net/minecraft/core/block/entity/TileEntityFurnace getBurnTimeFromItem (Lnet/minecraft/core/item/ItemStack;)I
+accessible method net/minecraft/core/block/entity/TileEntityTrommel getItemBurnTime (Lnet/minecraft/core/item/ItemStack;)I
+accessible method net/minecraft/core/block/entity/TileEntityFurnaceBlast getBurnTimeFromItem (Lnet/minecraft/core/item/ItemStack;)I
