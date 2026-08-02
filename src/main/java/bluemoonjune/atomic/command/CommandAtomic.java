@@ -21,15 +21,20 @@ public class CommandAtomic implements CommandManager.CommandRegistry {
 		for (String feature : Atomic.FEATURES.keySet()) {
 			ArgumentBuilderRequired<CommandSource, Boolean> featureValueArgument;
 			featureValueArgument = ArgumentBuilderRequired.<CommandSource, Boolean>argument("value", ArgumentTypeBool.bool()).requires(CommandSource::hasAdmin).executes((c) -> {
-
 				boolean v = c.getArgument("value", Boolean.class);
 				Atomic.FEATURES.put(feature, v);
+				if (EnvironmentHelper.isMultiplayerServer()) {
+					MinecraftServer.getInstance().playerList.sendPacketToAllPlayers(new PacketToggleFeature(feature, v));
+				}
 				c.getSource().sendMessage(String.format("%s Atomic feature %s.", v ? "Enabled" : "Disabled", feature));
 				return 1;
 			});
 
 			builder.then(ArgumentBuilderLiteral.<CommandSource>literal(feature).executes((c) -> {
 				boolean v = Atomic.FEATURES.get(feature);
+				if (EnvironmentHelper.isMultiplayerServer()) {
+					MinecraftServer.getInstance().playerList.sendPacketToAllPlayers(new PacketToggleFeature(feature, v));
+				}
 				c.getSource().sendMessage(String.format("%s is %s", feature, v ? "§5Enabled" : "§eDisabled"));
 				return 1;
 			}).then(featureValueArgument));

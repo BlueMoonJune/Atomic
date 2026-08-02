@@ -48,9 +48,10 @@ public class Atomic implements ModInitializer {
     public void onInitialize() {
 		LOGGER.info("Atomic initialized.");
 
-		Packet.addMapping(202, true, false, PacketToggleFeature.class);
+		Packet.addMapping(202, true, true, PacketToggleFeature.class);
 
-		registerFeature("BasketTipping");
+		registerFeature("BasketTippingPlayers");
+		registerFeature("BasketTippingActivators");
 		registerFeature("Craftivators");
 		registerFeature("ReinforcedPressing");
 		registerFeature("ReinforcedCrushing");
@@ -64,7 +65,6 @@ public class Atomic implements ModInitializer {
 		PRESSING.put(new ItemStack(Items.BONE, 1), new ItemStack(Items.DYE, 3, 15));
 
 		CRUSHING.put(Blocks.SUGARCANE, new ItemStack(Items.DUST_SUGAR, 3));
-		CRUSHING.put(Blocks.COBBLE_NETHERRACK, new ItemStack(Blocks.SOULSAND.asItem(), 1));
 		CRUSHING.put(Blocks.WOOL, new ItemStack(Items.STRING, 4));
 	}
 }

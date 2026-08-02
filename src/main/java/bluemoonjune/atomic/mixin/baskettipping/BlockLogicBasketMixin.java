@@ -39,7 +39,7 @@ public abstract class BlockLogicBasketMixin extends BlockLogic {
 		remap = false
 	)
 	public void onBlockRightClicked(World world, TilePosc tilePos, Player player, Side side, double xHit, double yHit, CallbackInfoReturnable<Boolean> cir) {
-		if (Atomic.FEATURES.get("BasketTipping")) {
+		if (Atomic.FEATURES.get("BasketTippingPlayers")) {
 			flip(world, tilePos);
 			cir.setReturnValue(true);
 			cir.cancel();
@@ -54,7 +54,7 @@ public abstract class BlockLogicBasketMixin extends BlockLogic {
 		remap = false
 	)
 	public void onActivatorInteract(World world, TilePosc tilePos, TileEntityActivator activator, Direction direction, CallbackInfo ci) {
-		if (Atomic.FEATURES.get("BasketTipping")) {
+		if (Atomic.FEATURES.get("BasketTippingActivators")) {
 			flip(world, tilePos);
 			ci.cancel();
 		}

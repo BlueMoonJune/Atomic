@@ -18,6 +18,8 @@ public class PacketToggleFeature extends Packet {
 		this.state = state;
 	}
 
+	public PacketToggleFeature() {}
+
 	@Override
 	public void read(DataInputStream dataInputStream) throws IOException {
 		state = dataInputStream.readByte() == 1;
@@ -32,6 +34,7 @@ public class PacketToggleFeature extends Packet {
 
 	@Override
 	public void handlePacket(PacketHandler packetHandler) {
+		Atomic.LOGGER.info("Set feature '%s' to %s".formatted(Atomic.ID_FEATURES.get(featureID), state));
 		Atomic.FEATURES.put(Atomic.ID_FEATURES.get(featureID), state);
 	}
 

@@ -41,7 +41,7 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 		remap = false
 	)
 	public void flipCheck(CallbackInfo ci) {
-		if (!Atomic.FEATURES.get("BasketTipping") || worldObj == null) return;
+		if (!Atomic.FEATURES.get("BasketTippingPlayers") && !Atomic.FEATURES.get("BasketTippingActivators") || worldObj == null) return;
 		if (flipTime > 0) {
 			flipTime--;
 			if (flipTime == 0) {
@@ -131,7 +131,7 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 		remap = false
 	)
 	private void dropItemStack(Random rand, ItemStack itemstack, CallbackInfo ci) {
-		if (!Atomic.FEATURES.get("BasketTipping")) return;
+		if (!Atomic.FEATURES.get("BasketTippingPlayers") && !Atomic.FEATURES.get("BasketTippingActivators")) return;
 		ci.cancel();
 		float f = 0.5f;
 		float f1 = 0.5f;
@@ -161,7 +161,7 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 		remap = false
 	)
 	public void dontPickupIfFlipped(CallbackInfoReturnable<Boolean> ci) {
-		if (!Atomic.FEATURES.get("BasketTipping")) return;
+		if (!Atomic.FEATURES.get("BasketTippingPlayers") && !Atomic.FEATURES.get("BasketTippingActivators")) return;
 		if (flipTime > 0) {
 			ci.setReturnValue(false);
 			ci.cancel();
@@ -182,7 +182,7 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 		remap = false
 	)
 	public void overflowPatch(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-		if (!Atomic.FEATURES.get("BasketTipping")) return;
+		if (!Atomic.FEATURES.get("BasketTippingPlayers") && !Atomic.FEATURES.get("BasketTippingActivators")) return;
 		updateNumUnits();
 	}
 
