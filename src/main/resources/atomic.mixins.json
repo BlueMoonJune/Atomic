@@ -10,8 +10,6 @@
     "baskettipping.TileEntityBasketMixin",
     "craftivators.BlockLogicActivatorMixin",
     "craftivators.BlockLogicWorkbenchMixin",
-    "oreredirect.OreRedstoneMixin",
-    "oreredirect.WorldMixin",
     "reinforced.BlockLogicMixin",
     "reinforced.BlockLogicPistonBaseSteelMixin",
     "reinforced.BlockLogicSugarcaneMixin"

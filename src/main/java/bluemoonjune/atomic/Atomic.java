@@ -52,7 +52,6 @@ public class Atomic implements ModInitializer {
 
 		registerFeature("BasketTipping");
 		registerFeature("Craftivators");
-		registerFeature("OreRedirect");
 		registerFeature("ReinforcedPressing");
 		registerFeature("ReinforcedCrushing");
 
@@ -64,6 +63,7 @@ public class Atomic implements ModInitializer {
 		PRESSING.put(new ItemStack(Items.INGOT_STEEL_CRUDE, 3), new ItemStack(Items.INGOT_STEEL, 1));
 		PRESSING.put(new ItemStack(Items.BONE, 1), new ItemStack(Items.DYE, 3, 15));
 
+		CRUSHING.put(Blocks.SUGARCANE, new ItemStack(Items.DUST_SUGAR, 3));
 		CRUSHING.put(Blocks.COBBLE_NETHERRACK, new ItemStack(Blocks.SOULSAND.asItem(), 1));
 		CRUSHING.put(Blocks.WOOL, new ItemStack(Items.STRING, 4));
 	}
