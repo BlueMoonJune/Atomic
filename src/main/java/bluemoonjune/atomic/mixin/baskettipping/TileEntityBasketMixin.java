@@ -2,20 +2,17 @@ package bluemoonjune.atomic.mixin.baskettipping;
 
 import bluemoonjune.atomic.Atomic;
 import bluemoonjune.atomic.baskettipping.IFlip;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.core.block.BlockLogicFurnace;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.entity.*;
 import net.minecraft.core.entity.EntityItem;
-import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.inventory.container.Container;
 import net.minecraft.core.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,6 +25,8 @@ import java.util.Random;
 
 @Mixin(value = TileEntityBasket.class)
 public abstract class TileEntityBasketMixin extends TileEntity implements IFlip {
+
+	@Unique
 	public int flipTime = 0;
 
 	@Shadow(remap = false)
@@ -53,7 +52,7 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 	}
 
 	@Shadow
-	public abstract void updateNumUnits();
+	protected abstract void updateNumUnits();
 
 	@Override
 	public void flip(int flipTime) {
@@ -63,13 +62,12 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 
 		int globalOffset = below instanceof TileEntityActivator ? ((TileEntityActivator) below).stackSelector : 0;
 
-		if (below instanceof Container) {
-			Container container = (Container) below;
+		if (below instanceof Container container) {
 			List<TileEntityBasket.BasketEntry> toRemove = new ArrayList<>();
 
 			for (Map.Entry<TileEntityBasket.BasketEntry, Integer> entry : this.contents.object2IntEntrySet()) {
-				TileEntityBasket.BasketEntry basketEntry = (TileEntityBasket.BasketEntry) entry.getKey();
-				ItemStack basketEntryStack = new ItemStack(basketEntry.id(), (Integer) entry.getValue(), basketEntry.metadata(), basketEntry.tag());
+				TileEntityBasket.BasketEntry basketEntry = entry.getKey();
+				ItemStack basketEntryStack = new ItemStack(basketEntry.id(), entry.getValue(), basketEntry.metadata(), basketEntry.tag());
 
 				int size = container.getContainerSize();
 
@@ -147,7 +145,7 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 			workingWorld = this.carriedBlock.world;
 		}
 
-		EntityItem item = new EntityItem(workingWorld, (double)((float)this.tilePos.x + f), (double)((float)this.tilePos.y + f1), (double)((float)this.tilePos.z + f2), itemstack);
+		EntityItem item = new EntityItem(workingWorld, this.tilePos.x + f, this.tilePos.y + f1, this.tilePos.z + f2, itemstack);
 		item.xd = 0;
 		item.yd = 0;
 		item.zd = 0;
@@ -167,14 +165,6 @@ public abstract class TileEntityBasketMixin extends TileEntity implements IFlip 
 			ci.cancel();
 		}
 	}
-
-	@Shadow
-	private int numUnitsInside;
-
-	@Shadow
-	protected abstract int getItemSizeUnits(Item item);
-	@Shadow
-	public abstract int getMaxUnits();
 
 	@Inject(
 		method = "importItemStack",

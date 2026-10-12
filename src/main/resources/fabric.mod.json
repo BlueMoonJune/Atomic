@@ -2,36 +2,38 @@
   "schemaVersion": 1,
   "id": "atomic",
   "version": "${version}",
-
   "name": "Atomic",
   "description": "A collection of tweaks for BTA you can pick-and-choose",
   "authors": [
     "BlueMoonJune - Lead Developer"
   ],
   "contact": {
-    "homepage": "",
-    "sources": ""
+    "homepage": "https://modrinth.com/mod/bta-atomic",
+    "sources": "https://github.com/BlueMoonJune/Atomic",
+    "issues": "https://github.com/BlueMoonJune/Atomic/issues"
   },
 
 	"icon": "icon.png",
   "license": "CC0-1.0",
-
   "environment": "*",
   "entrypoints": {
     "main": [
 			"bluemoonjune.atomic.Atomic"
     ]
 	},
+
   "mixins": [
 		"atomic.mixins.json"
   ],
 
 	"accessWidener": "atomic.accesswidener",
-
-  "depends": {
+	"depends": {
+		"fabricloader": ">=${fabricloader}",
 		"minecraft": "*",
-    "fabricloader": ">=0.15.5"
-  },
-  "suggests": {
-  }
+		"java": ">=${java}"
+	},
+
+	"suggests": {
+		"modmenu": ">=${modmenu}"
+	}
 }

@@ -12,13 +12,10 @@ import net.minecraft.core.net.packet.Packet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import turniplabs.halplibe.event.defs.CommonEvents;
-import turniplabs.halplibe.util.GameStartEntrypoint;
-import turniplabs.halplibe.util.RecipeEntrypoint;
 import turniplabs.halplibe.util.dependency.Key;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class Atomic implements ModInitializer {
     public static final String MOD_ID = "atomic";
@@ -27,8 +24,6 @@ public class Atomic implements ModInitializer {
 	public static final Map<String, Boolean> FEATURES = new HashMap<>();
 	public static final Map<String, Integer> FEATURE_IDS = new HashMap<>();
 	public static final Map<Integer, String> ID_FEATURES = new HashMap<>();
-	public static final Map<String, String> BEST_VERSION = new HashMap<>();
-	public static final Map<String, String> NEEDED_VERSION = new HashMap<>();
 
 	public static boolean crushing = false;
 	public static final Map<ItemStack, ItemStack> PRESSING = new HashMap<>();
@@ -55,6 +50,8 @@ public class Atomic implements ModInitializer {
 		registerFeature("Craftivators");
 		registerFeature("ReinforcedPressing");
 		registerFeature("ReinforcedCrushing");
+		registerFeature("NetherLavaSources");
+		registerFeature("NetherAcidSources");
 
 		CommonEvents.RECIPES_READY.listen(Key.of(MOD_ID), this::onRecipesReady);
     }

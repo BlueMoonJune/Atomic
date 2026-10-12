@@ -2,19 +2,14 @@ package bluemoonjune.atomic.mixin.baskettipping;
 
 import bluemoonjune.atomic.Atomic;
 import bluemoonjune.atomic.baskettipping.IFlip;
-import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockLogic;
 import net.minecraft.core.block.BlockLogicBasket;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.entity.TileEntityActivator;
-import net.minecraft.core.block.entity.TileEntityBasket;
-import net.minecraft.core.block.material.Material;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.helper.Direction;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
-import net.minecraft.core.world.pos.TilePos;
 import net.minecraft.core.world.pos.TilePosc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -24,13 +19,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = BlockLogicBasket.class)
-public abstract class BlockLogicBasketMixin extends BlockLogic {
+public abstract class BlockLogicBasketMixin {
 
 //	public final int FLIP = 0b100000;
-
-	public BlockLogicBasketMixin(Block<?> block, Material material) {
-		super(block, material);
-	}
 
 	@Inject(
 		method = "onInteracted",

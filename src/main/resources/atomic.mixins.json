@@ -10,6 +10,8 @@
     "baskettipping.TileEntityBasketMixin",
     "craftivators.BlockLogicActivatorMixin",
     "craftivators.BlockLogicWorkbenchMixin",
+    "fluids.FluidAcidMixin",
+    "fluids.FluidLavaMixin",
     "reinforced.BlockLogicMixin",
     "reinforced.BlockLogicPistonBaseSteelMixin",
     "reinforced.BlockLogicSugarcaneMixin"

@@ -34,7 +34,7 @@ public class PacketToggleFeature extends Packet {
 
 	@Override
 	public void handlePacket(PacketHandler packetHandler) {
-		Atomic.LOGGER.info("Set feature '%s' to %s".formatted(Atomic.ID_FEATURES.get(featureID), state));
+		Atomic.LOGGER.info("Set feature {} to {}", Atomic.ID_FEATURES.get(featureID), state);
 		Atomic.FEATURES.put(Atomic.ID_FEATURES.get(featureID), state);
 	}
 

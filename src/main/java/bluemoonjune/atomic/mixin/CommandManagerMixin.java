@@ -1,8 +1,6 @@
 package bluemoonjune.atomic.mixin;
 
 import bluemoonjune.atomic.Atomic;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.net.command.CommandManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

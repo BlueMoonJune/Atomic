@@ -16,7 +16,7 @@ public class CommandAtomic implements CommandManager.CommandRegistry {
 	public void register(CommandDispatcher<CommandSource> commandDispatcher) {
 
 
-		ArgumentBuilderLiteral<CommandSource> builder = ArgumentBuilderLiteral.<CommandSource>literal("atomic");
+		ArgumentBuilderLiteral<CommandSource> builder = ArgumentBuilderLiteral.literal("atomic");
 
 		for (String feature : Atomic.FEATURES.keySet()) {
 			ArgumentBuilderRequired<CommandSource, Boolean> featureValueArgument;

@@ -5,6 +5,7 @@ import com.mojang.nbt.tags.CompoundTag;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.WorldSource;
 import net.minecraft.core.world.save.LevelStorage;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,8 +18,9 @@ import java.nio.file.Files;
 @Mixin(value = World.class)
 public abstract class WorldMixin implements WorldSource {
 
+	@Final
 	@Shadow
-	public LevelStorage levelStorage;
+	private LevelStorage levelStorage;
 
 	@Inject(
 		method = "saveWorldData",
@@ -50,9 +52,7 @@ public abstract class WorldMixin implements WorldSource {
 				Atomic.FEATURES.put(feature, tag.getBoolean(feature));
 			}
 		} else {
-			for (String feature : Atomic.FEATURES.keySet()) {
-				Atomic.FEATURES.put(feature, false);
-			}
+			Atomic.FEATURES.replaceAll((feature, value) -> false);
 		}
 	}
 }
